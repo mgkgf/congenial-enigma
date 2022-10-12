@@ -67,4 +67,15 @@ stages:
    
 - stage: Deploy
   jobs:
-  - job: Deploy
+  - job: Deploy_Application_Precondition
+    pool: server
+    steps:  
+
+    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+      inputs:
+        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
+
+
+  - job: Deploy_Application
+    dependsOn: Deploy_Application_Precondition
+    condition: succeeded()
