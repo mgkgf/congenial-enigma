@@ -14,28 +14,57 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@0
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: NuGetToolInstaller@0
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
 
-- task: CopyFiles@2
-  displayName: 'Copy Files'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)'
-    Contents: '**/*.json'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    - task: VSTest@2
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: |
+          **\*test*.dll
+          !**\obj\**
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        vsTestVersion: '16.0'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+    
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)'
+        Contents: '**/*.json'
+        TargetFolder: '$(build.artifactstagingdirectory)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+
+- stage: Test
+  jobs:
+  - job: Validate
+    variables:
+      - name: varChangesetNumber
+        value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
+
+   
+- stage: Deploy
+  jobs:
+  - job: Deploy
