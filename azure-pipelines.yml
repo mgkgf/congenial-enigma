@@ -80,16 +80,53 @@ stages:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
         changesetNumber: '$(varChangesetNumber)'
         applicationName: 'Parts Unlimited'
+    - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+      name: getSnapshot
+      inputs:
+        connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
+        applicationName: 'Parts Unlimited'
+        deployableName: 'Production_1'
+        changeSetNumber: '$(varChangeSetNumber)'
+    - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
+      name: getSnapshotName
+      inputs:
+        deployableName: 'Production_1'
+        script: |
+          function run(){
+          let name;
+          let deployableName = process.argv[2]; 
+          let jsonObj = $(getSnapshot.snapshotObjects);
+          let size = jsonObj.result.length;
+          for( let i =0; i<size ;i++ ){
+          obj = jsonObj.result[i];
+          if(obj["deployable_id.name"].toLowerCase() == deployableName){
+          name = obj.name;
+          console.log(name);   // This standard output of inline script is given as the task output
+          }
+          }
+          }
+          run();
+
+    - task: ServiceNow-DevOps-Config-Agent-Publish-Snapshot@1
+      inputs:
+        connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
+        applicationName: 'Parts Unlimited'
+        deployableName: 'Production_1'
+        snapshotName: '$(getSnapShotName.SnapshotName)'
 
 - stage: Deploy
   jobs:
   - job: Deploy_Application_Precondition
+    variables:
+    - name: varSnapshotName
+      value: $[stageDependencies.Test.Validate.outputs['getSnapShotName.snapshotName'] ]
     pool: server
     steps:  
-
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
+        applicationName: Parts Unlimited
+        snapshotName: $(varSnapshotName)
         changeRequestDetails: |
           {
                                 "setCloseCode": false,
