@@ -21,11 +21,13 @@ stages:
     steps:
     - task: NuGetToolInstaller@0
 
+
     - task: NuGetCommand@2
       inputs:
         restoreSolution: '$(solution)'
 
     - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+      name: 'componentUpload'
       inputs:
         connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
         applicationName: 'Parts Unlimited'
@@ -35,6 +37,7 @@ stages:
         dataFormat: 'json'
         autoValidate: true
         autoCommit: true
+
     - task: VSBuild@1
       inputs:
         solution: '$(solution)'
@@ -74,10 +77,25 @@ stages:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
 
+    steps:
+      
+    - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
+      inputs:
+        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
+        changesetNumber: '$(varChangesetNumber)'
+        applicationName: 'Parts Unlimited'
+
 - stage: Deploy
   jobs:
   - job: Deploy_Application_Precondition
     pool: server
+    steps:  
+
+    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+      inputs:
+        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
+
+
   - job: Deploy_Application
     dependsOn: Deploy_Application_Precondition
     condition: succeeded()
