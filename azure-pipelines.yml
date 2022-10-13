@@ -25,6 +25,16 @@ stages:
       inputs:
         restoreSolution: '$(solution)'
 
+    - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+      inputs:
+        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
+        applicationName: 'Parts Unlimited'
+        uploadTarget: 'component'
+        configFile: '**/*.param.json'
+        namePath: 'ARM'
+        dataFormat: 'json'
+        autoValidate: true
+        autoCommit: true
     - task: VSBuild@1
       inputs:
         solution: '$(solution)'
@@ -63,18 +73,3 @@ stages:
     variables:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
-
-- stage: Deploy
-  jobs:
-  - job: Deploy_Application_Precondition
-    pool: server
-    steps:  
-
-    - task: ServiceNow-DevOps-Server-Change-Acceleration@1
-      inputs:
-        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
-
-
-  - job: Deploy_Application
-    dependsOn: Deploy_Application_Precondition
-    condition: succeeded()
