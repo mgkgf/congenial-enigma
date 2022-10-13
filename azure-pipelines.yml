@@ -71,16 +71,15 @@ stages:
 - stage: Test
   jobs:
   - job: Validate
-#    variables:
-#      - name: varChangesetNumber
-#        value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
-
-#    steps:    
-#    - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
-#      inputs:
-#        connectedServiceName: 'glidefastconsultingllcdemo17-Parts Unlimited-ServiceNow DevOps Service Connection'
-#        changesetNumber: '$(varChangesetNumber)'
-#        applicationName: 'Parts Unlimited'
+    variables:
+      - name: varChangesetNumber
+        value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
+    steps:    
+    - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
+      inputs:
+        connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
+        changesetNumber: '$(varChangesetNumber)'
+        applicationName: 'Parts Unlimited'
 
 - stage: Deploy
   jobs:
