@@ -73,3 +73,11 @@ stages:
     variables:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
+
+- stage: Deploy
+  jobs:
+  - job: Deploy_Application_Precondition
+    pool: server
+  - job: Deploy_Application
+    dependsOn: Deploy_Application_Precondition
+    condition: succeeded()
