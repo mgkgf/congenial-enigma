@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "WebsiteName": {
-            "value": "partsunlimited2"
+            "value": "https://partsunlimited2.local"
         },
         "PartsUnlimitedServerName": {
             "value": ""
