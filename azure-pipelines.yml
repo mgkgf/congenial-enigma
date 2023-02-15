@@ -67,6 +67,20 @@ stages:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
+    - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+      inputs:
+        connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
+        artifactsPayload: |
+          {
+            "artifacts": [
+                {
+                  "name": "BuildDrop",
+                  "version": "1.$(Build.BuildId)",
+                  "semanticVersion": "1.$(Build.BuildId).0",
+                  "repositoryName": "PartsUnlimited"
+                }
+            ]
+          }
 
 - stage: Test
   jobs:
@@ -116,22 +130,6 @@ stages:
 
 - stage: Deploy
   jobs:
-  - job: Register_Artifact
-    steps:
-    - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
-      inputs:
-        connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
-        artifactsPayload: |
-          {
-            "artifacts": [
-                {
-                  "name": "BuildDrop",
-                  "version": "1.$(Build.BuildId)",
-                  "semanticVersion": "1.$(Build.BuildId).0",
-                  "repositoryName": "PartsUnlimited"
-                }
-            ]
-          }
   - job: Deploy_Application_Precondition
     variables:
     - name: varSnapshotName
