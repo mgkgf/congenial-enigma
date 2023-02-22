@@ -137,6 +137,7 @@ stages:
     pool: server
     steps:  
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+      name: 'task1'
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
         applicationName: Parts Unlimited
@@ -156,6 +157,7 @@ stages:
                                   "end_date": "2022-10-23 11:59:59"
                                }
                               }
+    - script: echo $(task1.CHANGE_REQUEST_NUMBER)
 
 
   - job: Deploy_Application
