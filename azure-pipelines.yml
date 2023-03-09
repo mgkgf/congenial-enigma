@@ -14,6 +14,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   startDate: $[format('{0:yyyy}-{0:MM}-{0:dd} {0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
+  endDate: $(Get-Date (Get-Date).AddHours(12) -Format "yyyy-MM-dd HH:mm:ss")
 
 stages:
 - stage: Build
@@ -94,7 +95,9 @@ stages:
     variables:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
-    steps:    
+    steps: 
+    - powershell: |
+        Write-Host "The date twelve hours from now will be: $(endDate)"  
     - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
