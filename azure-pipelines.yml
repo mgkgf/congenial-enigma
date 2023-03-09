@@ -25,8 +25,9 @@ stages:
       - name: twelveHoursFromNow
         value: $(Get-Date (Get-Date).AddHours(12) -Format "yyyy-MM-dd HH:mm:ss")
     steps:
-    - powershell: |
-        Write-Host "The date twelve hours from now will be: $(twelveHoursFromNow)"
+    - bash: |
+        echo "##vso[task.setvariable variable=startDate;isOutput=true]$(startDate)"
+      name: passStartDate
     - task: NuGetToolInstaller@0
 
 
@@ -144,6 +145,8 @@ stages:
     variables:
     - name: varSnapshotName
       value: $[stageDependencies.Test.Validate.outputs['getSnapShotName.snapshotName'] ]
+    - name: changeStartDate
+      value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate']]
     pool: server
     steps:  
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
@@ -163,7 +166,7 @@ stages:
                                   "priority": "2",
                                   "comments": "This is a sample pipeline script to be added in your change step",
                                   "work_notes": "Update this to work_notes",
-                                  "start_date": "$(startDate)",
+                                  "start_date": "$(changeStartDate)",
                                   "end_date": "$(endDate)"
                                }
                               }
