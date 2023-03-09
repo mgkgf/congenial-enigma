@@ -21,7 +21,7 @@ stages:
   - job: Build
     variables:
       - name: twelveHoursFromNow
-        value: $((Get-Date -Format "yyyy-MM-dd HH:mm:ss").AddHours(12))
+        value: $(Get-Date (Get-Date).AddHours(12) -Format "yyyy-MM-dd HH:mm:ss")
     steps:
     - powershell: |
         Write-Host "The date twelve hours from now will be: $(twelveHoursFromNow)"
