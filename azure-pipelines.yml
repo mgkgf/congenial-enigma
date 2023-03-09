@@ -138,6 +138,8 @@ stages:
         snapshotName: '$(getSnapShotName.SnapshotName)'
 
 - stage: Deploy
+  dependsOn: 
+    - Build
   jobs:
   - job: Deploy_Application_Precondition
     variables:
