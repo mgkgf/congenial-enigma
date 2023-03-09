@@ -14,12 +14,13 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   startDate: $[format('{0:yyyy}-{0:MM}-{0:dd} {0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
-  twelveHoursFromNow: ''
 
 stages:
 - stage: Build
   jobs:
   - job: Build
+    variables:
+      - name: twelveHoursFromNow
     steps:
     - powershell: |
         Write-Host "##vso[task.setvariable variable=twelveHoursFromNow;](Get-Date -Format "yyyy-MM-dd HH:mm:ss").AddHours(12)"
