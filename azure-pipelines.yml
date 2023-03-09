@@ -20,7 +20,9 @@ stages:
   jobs:
   - job: Build
     steps:
-    - powershell: Write-Host "##vso[task.setvariable variable=twelveHoursFromNow;](Get-Date -Format "yyyy-MM-dd HH:mm:ss").AddHours(12)"
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=twelveHoursFromNow;](Get-Date -Format "yyyy-MM-dd HH:mm:ss").AddHours(12)"
+        Write-Host "The date twelve hours from now will be: $(twelveHoursFromNow)"
     - task: NuGetToolInstaller@0
 
 
