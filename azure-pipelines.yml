@@ -97,9 +97,7 @@ stages:
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
       - name: anotherStartDate
         value: $[stageDependencies.Build.Build.outputs['passStartDate.someVar']]
-    steps: 
-    - powershell: |
-        Write-Host "The date twelve hours from now will be: $(anotherStartDate)"  
+    steps:  
     - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
