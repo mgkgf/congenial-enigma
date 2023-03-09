@@ -154,7 +154,7 @@ stages:
                                   "priority": "2",
                                   "comments": "This is a sample pipeline script to be added in your change step",
                                   "work_notes": "Update this to work_notes",
-                                  "start_date": $(startDate),
+                                  "start_date": "$(startDate)",
                                   "end_date": "2022-10-23 11:59:59"
                                }
                               }
