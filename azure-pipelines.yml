@@ -95,9 +95,11 @@ stages:
     variables:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
+      - name: anotherStartDate
+        value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate']]
     steps: 
     - powershell: |
-        Write-Host "The date twelve hours from now will be: $(endDate)"  
+        Write-Host "The date twelve hours from now will be: $(anotherStartDate)"  
     - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
@@ -144,7 +146,7 @@ stages:
     - name: varSnapshotName
       value: $[stageDependencies.Test.Validate.outputs['getSnapShotName.snapshotName'] ]
     - name: changeStartDate
-      value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate']]
+      value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate'] ]
     pool: server
     steps:  
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
