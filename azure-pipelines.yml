@@ -13,7 +13,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  startDate: $[format('{0:yyyy}-{0:MM}-{0:dd} {0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
+  #startDate: $[format('{0:yyyy}-{0:MM}-{0:dd} {0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
+  startDate: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
   endDate: $(Get-Date (Get-Date).AddHours(12) -Format "yyyy-MM-dd HH:mm:ss")
 
 stages:
@@ -163,7 +164,7 @@ stages:
                                   "comments": "This is a sample pipeline script to be added in your change step",
                                   "work_notes": "Update this to work_notes",
                                   "start_date": "$(startDate)",
-                                  "end_date": "2022-10-23 11:59:59"
+                                  "end_date": "$(endDate)"
                                }
                               }
 
