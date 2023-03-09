@@ -96,7 +96,7 @@ stages:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
       - name: anotherStartDate
-        value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate']]
+        value: $[stageDependencies.Build.Build.outputs['passStartDate.someVar']]
     steps: 
     - powershell: |
         Write-Host "The date twelve hours from now will be: $(anotherStartDate)"  
@@ -146,7 +146,7 @@ stages:
     - name: varSnapshotName
       value: $[stageDependencies.Test.Validate.outputs['getSnapShotName.snapshotName'] ]
     - name: changeStartDate
-      value: $[stageDependencies.Build.Build.outputs['passStartDate.startDate'] ]
+      value: $[stageDependencies.Build.Build.outputs['passStartDate.someVar'] ]
     pool: server
     steps:  
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
