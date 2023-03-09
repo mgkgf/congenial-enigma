@@ -25,6 +25,7 @@ stages:
     - powershell: |
         Write-Host "##vso[task.setvariable variable=startDate;isOutput=true](Get-Date -Format "yyyy-MM-dd HH:mm:ss")"
       name: passStartDate
+    - powershell: Write-Host "I created a startDate variable with the value $(startDate)"
     - task: NuGetToolInstaller@0
 
 
