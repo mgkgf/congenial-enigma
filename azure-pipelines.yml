@@ -24,8 +24,11 @@ stages:
     steps:
     - powershell: |
         Write-Host "##vso[task.setvariable variable=someVar;isOutput=true]$(startDate)"
+        Write-Host "##vso[task.setvariable variable=anotherVar;isOutput=true]$(endDate)"
       name: passStartDate
-    - powershell: Write-Host "I created a startDate variable with the value $(passStartDate.someVar)"
+    - powershell: |
+        Write-Host "I created a startDate variable with the value $(passStartDate.someVar)"
+        Write-Host "And another date: $(passStartDate.anotherVar)"
     - task: NuGetToolInstaller@0
 
 
