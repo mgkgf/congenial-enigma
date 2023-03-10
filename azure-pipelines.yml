@@ -22,15 +22,7 @@ stages:
   jobs:
   - job: Build
     steps:
-    - powershell: |
-        Write-Host "##vso[task.setvariable variable=someVar;isOutput=true]$(startDate)"
-        Write-Host "##vso[task.setvariable variable=anotherVar;isOutput=true]$(endDate)"
-      name: passStartDate
-    - powershell: |
-        Write-Host "I created a startDate variable with the value $(passStartDate.someVar)"
-        Write-Host "And another date: $(passStartDate.anotherVar)"
     - task: NuGetToolInstaller@0
-
 
     - task: NuGetCommand@2
       inputs:
@@ -98,9 +90,14 @@ stages:
     variables:
       - name: varChangesetNumber
         value: $[stageDependencies.Build.Build.outputs['componentUpload.changesetNumber'] ]
-      - name: anotherStartDate
-        value: $[stageDependencies.Build.Build.outputs['passStartDate.someVar']]
-    steps:  
+    steps: 
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=someVar;isOutput=true]$(startDate)"
+        Write-Host "##vso[task.setvariable variable=anotherVar;isOutput=true]$(endDate)"
+      name: passStartDate
+    - powershell: |
+        Write-Host "I created a startDate variable with the value $(passStartDate.someVar)"
+        Write-Host "And another date: $(passStartDate.anotherVar)" 
     - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
       inputs:
         connectedServiceName: 'dev72220-Parts Unlimited-ServiceNow DevOps Service Connection'
@@ -141,15 +138,15 @@ stages:
         snapshotName: '$(getSnapShotName.SnapshotName)'
 
 - stage: Deploy
-  dependsOn: 
-    - Build
   jobs:
   - job: Deploy_Application_Precondition
     variables:
     - name: varSnapshotName
       value: $[stageDependencies.Test.Validate.outputs['getSnapShotName.snapshotName'] ]
     - name: changeStartDate
-      value: $[stageDependencies.Build.Build.outputs['passStartDate.someVar'] ]
+      value: $[stageDependencies.Test.Validate.outputs['passStartDate.someVar'] ]
+    - name: changeEndDate
+      value: $[stageDependencies.Test.Validate.outputs['passStartDate.anotherVar'] ]
     pool: server
     steps:  
     - task: ServiceNow-DevOps-Server-Change-Acceleration@1
@@ -170,7 +167,7 @@ stages:
                                   "comments": "This is a sample pipeline script to be added in your change step",
                                   "work_notes": "Update this to work_notes",
                                   "start_date": "$(changeStartDate)",
-                                  "end_date": "$(endDate)"
+                                  "end_date": "$(changeEndDate)"
                                }
                               }
 
