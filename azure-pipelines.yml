@@ -173,6 +173,8 @@ stages:
 
 
   - job: Deploy_Application
+    variables:
+      crVar: $[dependencies.Deploy_Application_Precondition.outputs['task1.Response']]
     dependsOn: Deploy_Application_Precondition
     condition: succeeded()
     steps:
