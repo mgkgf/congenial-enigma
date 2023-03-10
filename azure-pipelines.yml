@@ -23,7 +23,7 @@ stages:
   - job: Build
     steps:
     - powershell: |
-        Write-Host "##vso[task.setvariable variable=someVar;isOutput=true]Foo"
+        Write-Host "##vso[task.setvariable variable=someVar;isOutput=true]$(startDate)"
       name: passStartDate
     - powershell: Write-Host "I created a startDate variable with the value $(passStartDate.someVar)"
     - task: NuGetToolInstaller@0
